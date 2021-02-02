@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.text.HtmlCompat;
 import androidx.preference.PreferenceManager;
 
@@ -373,7 +374,8 @@ public final class ExtractorHelper {
         }
     }
 
-    private static String capitalizeIfAllUppercase(final String text) {
+    @VisibleForTesting
+    static String capitalizeIfAllUppercase(final String text) {
         for (int i = 0; i < text.length(); i++) {
             if (Character.isLowerCase(text.charAt(i))) {
                 return text; // there is at least a lowercase letter -> not all uppercase
