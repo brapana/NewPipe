@@ -35,6 +35,7 @@ android {
     buildTypes {
         debug {
             debuggable true
+            testCoverageEnabled true
 
             // suffix the app id and the app name with git branch name
             def workingBranch = getGitWorkingBranch()

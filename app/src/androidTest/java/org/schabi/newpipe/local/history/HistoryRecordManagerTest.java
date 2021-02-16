@@ -7,7 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.schabi.newpipe.database.history.model.SearchHistoryEntry;
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry;
+import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 
@@ -196,6 +198,170 @@ public class HistoryRecordManagerTest {
         Collections.sort(emptyHistoryList2, (o1, o2) -> (o2.getAccessDate())
                 .compareTo(o1.getAccessDate()));
         assertEquals(0, emptyHistoryList2.size());
+    }
+
+
+    // BELOW ARE TESTS FOR EXPANDING COVERAGE
+
+    /**
+     * Tests deleting a particular history item as well as inserting a list of items at a time.
+     */
+    @Test
+    public void insertAndDeleteStreamHistory() {
+        // delete watchhistory
+        historyManager.deleteWholeStreamHistory().blockingGet();
+
+        // view two videos once, and one video being viewed twice between them
+        try {
+            historyManager.onViewed(
+                    StreamInfo.getInfo("https://www.youtube.com/watch?v=o5behEieBDA"))
+                    .blockingGet();
+
+            historyManager.onViewed(
+                    StreamInfo.getInfo("https://www.youtube.com/watch?v=c-fvFv8uprA"))
+                    .blockingGet();
+
+            historyManager.onViewed(
+                    StreamInfo.getInfo("https://www.youtube.com/watch?v=c-fvFv8uprA"))
+                    .blockingGet();
+
+            historyManager.onViewed(
+                    StreamInfo.getInfo("https://www.youtube.com/watch?v=usNsCeOV4GM"))
+                    .blockingGet();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        } catch (final ExtractionException e) {
+            e.printStackTrace();
+        }
+
+
+        // get history list
+        final List<StreamHistoryEntry> historyList = history.blockingFirst();
+
+        // delete all history items from watchhistory
+        historyManager.deleteStreamHistory(historyList).blockingGet();
+
+        // get the current history list and ensure the list is now empty
+        assertEquals(0, history.blockingFirst().size());
+
+        // insert the stream history
+        historyManager.insertStreamHistory(historyList).blockingGet();
+
+        // get the current history list and ensure the items have been added back in
+        final List<StreamHistoryEntry> newHistoryList = history.blockingFirst();
+        assertEquals("https://www.youtube.com/watch?v=usNsCeOV4GM",
+                newHistoryList.get(0).component1().getUrl());
+
+        assertEquals("https://www.youtube.com/watch?v=c-fvFv8uprA",
+                newHistoryList.get(1).component1().getUrl());
+
+        assertEquals("https://www.youtube.com/watch?v=o5behEieBDA",
+                newHistoryList.get(2).component1().getUrl());
+
+        // delete watchhistory
+        historyManager.deleteWholeStreamHistory().blockingGet();
+
+    }
+
+
+    /**
+     * Tests adding search queries to the search history and deleting both a specific and
+     * the entire search history.
+     */
+    @Test
+    public void searchHistory() {
+        // delete search history
+        historyManager.deleteCompleteSearchHistory().blockingGet();
+
+
+        // search for "John Lennon"
+        historyManager.onSearched(0, "John Lennon").blockingGet();
+
+        // search for "Beatles"
+        historyManager.onSearched(0, "Beatles").blockingGet();
+
+        // get related searches for an empty query (defaults to most recent searches)
+        final Flowable<List<SearchHistoryEntry>> relatedSearches = historyManager
+                .getRelatedSearches("", 5, 5);
+
+        // assert the most recent search is "Beatles"
+        assertEquals("Beatles", relatedSearches.blockingFirst().get(0).getSearch());
+        // delete the "Beatles" search and assert the most recent search is now "John Lennon"
+        historyManager.deleteSearchHistory("Beatles").blockingGet();
+        assertEquals("John Lennon", relatedSearches.blockingFirst().get(0).getSearch());
+
+        // delete search history
+        historyManager.deleteCompleteSearchHistory().blockingGet();
+
+        // assert search history is now empty
+        assertEquals(0, historyManager
+                .getRelatedSearches("", 5, 5)
+                .blockingFirst().size());
+    }
+
+    /**
+     * Tests adding and loading stream state objects in StreamInfo, ItemInfo,
+     * and ItemInfo List form.
+     */
+    @Test
+    public void streamStateHistory() {
+
+        // delete watchhistory
+        historyManager.deleteWholeStreamHistory().blockingGet();
+
+        try {
+            final StreamInfo vidInfo1 = StreamInfo
+                    .getInfo("https://www.youtube.com/watch?v=o5behEieBDA");
+
+            final StreamInfo vidInfo2 = StreamInfo
+                    .getInfo("https://www.youtube.com/watch?v=usNsCeOV4GM");
+
+
+            // save vid 1 stream state with 30 second progress time
+            historyManager.saveStreamState(vidInfo1, 30000)
+                    .blockingAwait();
+
+            // save vid 2 stream state with 50 second progress time
+            historyManager.saveStreamState(vidInfo2, 50000)
+                    .blockingAwait();
+
+            // assert that the stored progress time for video 1 is correct
+            assertEquals(30000, historyManager.loadStreamState(vidInfo1).blockingGet()
+                    .getProgressTime());
+
+            // assert that the stored progress time for video 2 is correct
+            assertEquals(50000, historyManager.loadStreamState(vidInfo2).blockingGet()
+                    .getProgressTime());
+
+
+            // get and save an InfoItem from the related videos of vid1
+            final List<InfoItem> infoItemsList = vidInfo1.getRelatedStreams();
+            final InfoItem vidRelated1 = infoItemsList.get(0);
+            final StreamInfo vidInfo3 = StreamInfo
+                    .getInfo(vidRelated1.getUrl());
+
+            // save the StreamInfo representation of the InfoItem with 40 second progress time
+            historyManager.saveStreamState(vidInfo3, 40000).blockingAwait();
+            // assert that loading a stream state from an InfoItem returns the correct progress time
+            assertEquals(40000,
+                    historyManager.loadStreamState(vidRelated1).blockingGet()[0].getProgressTime());
+
+
+            // assert that loading a stream state from a list of InfoItems containing the above
+            // InfoItem returns the correct progress time
+            assertEquals(40000,
+                    historyManager.loadStreamStateBatch(infoItemsList)
+                            .blockingGet().get(0).getProgressTime());
+
+        } catch (final IOException e) {
+            e.printStackTrace();
+        } catch (final ExtractionException e) {
+            e.printStackTrace();
+        }
+
+        // delete watchhistory
+        historyManager.deleteWholeStreamHistory().blockingGet();
+
     }
 
 }
