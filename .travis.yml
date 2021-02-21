@@ -34,4 +34,4 @@ script:
     if [ $? != 0 ]
     then
       exit $?
-    fi'
+    fi
