@@ -35,6 +35,6 @@ class LocalizationTest {
         val offset = OffsetDateTime.of(2021, 1, 6, 0, 0, 0, 0, ZoneOffset.UTC)
         val actual = Localization.relativeTime(offset)
 
-        assertEquals("4 days from now", actual)
+        assertEquals("5 days from now", actual)
     }
 }
