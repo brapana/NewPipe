@@ -29,4 +29,8 @@ script:
   # run android (instrumented) tests
   - ./gradlew connectedDebugAndroidTest
   # run local (non-instrumented) tests
-  - ./gradlew testDebugUnitTest
+  - ./gradlew test
+  if [ $? != 0 ]
+  then
+    exit $?
+  fi
