@@ -30,4 +30,8 @@ script:
   - ./gradlew connectedDebugAndroidTest
   # run local (non-instrumented) tests
   - ./gradlew test
-  - if [ $? != 0 ] then exit $? fi
+  - |
+    if [ $? != 0 ]
+    then
+      exit $?
+    fi'
