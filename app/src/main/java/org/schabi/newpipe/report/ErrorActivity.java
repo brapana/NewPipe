@@ -157,15 +157,17 @@ public class ErrorActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-    private static String getStackTrace(final Throwable throwable) {
+    // changed to public
+    public static String getStackTrace(final Throwable throwable) {
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw, true);
         throwable.printStackTrace(pw);
         return sw.getBuffer().toString();
     }
 
+    // changed to public
     // errorList to StringList
-    private static String[] elToSl(final List<Throwable> stackTraces) {
+    public static String[] elToSl(final List<Throwable> stackTraces) {
         final String[] out = new String[stackTraces.size()];
         for (int i = 0; i < stackTraces.size(); i++) {
             out[i] = getStackTrace(stackTraces.get(i));
@@ -280,7 +282,8 @@ public class ErrorActivity extends AppCompatActivity {
                 .show();
     }
 
-    private String formErrorText(final String[] el) {
+    // changed to public
+    public String formErrorText(final String[] el) {
         final StringBuilder text = new StringBuilder();
         if (el != null) {
             for (final String e : el) {
