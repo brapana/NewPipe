@@ -249,6 +249,9 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0", {
         exclude module: 'support-annotations'
     }
+
+    // added to enable mockito's android mocking features
+    androidTestImplementation "org.mockito:mockito-android:3.8.0"
 }
 
 static String getGitWorkingBranch() {

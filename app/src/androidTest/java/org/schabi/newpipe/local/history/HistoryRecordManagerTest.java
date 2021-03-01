@@ -45,7 +45,7 @@ public class HistoryRecordManagerTest {
         // view two videos once, and one video being viewed twice between them
         try {
             historyManager.onViewed(
-                    StreamInfo.getInfo("https://www.youtube.com/watch?v=o5behEieBDA"))
+                    StreamInfo.getInfo("https://www.youtube.com/watch?v=UocEGvQ10OE"))
                     .blockingGet();
 
             historyManager.onViewed(
@@ -106,7 +106,7 @@ public class HistoryRecordManagerTest {
         // view two videos once, and one video being viewed twice between them
         try {
             historyManager.onViewed(
-                    StreamInfo.getInfo("https://www.youtube.com/watch?v=o5behEieBDA"))
+                    StreamInfo.getInfo("https://www.youtube.com/watch?v=UocEGvQ10OE"))
                     .blockingGet();
 
             historyManager.onViewed(
@@ -214,7 +214,7 @@ public class HistoryRecordManagerTest {
         // view two videos once, and one video being viewed twice between them
         try {
             historyManager.onViewed(
-                    StreamInfo.getInfo("https://www.youtube.com/watch?v=o5behEieBDA"))
+                    StreamInfo.getInfo("https://www.youtube.com/watch?v=UocEGvQ10OE"))
                     .blockingGet();
 
             historyManager.onViewed(
@@ -255,7 +255,7 @@ public class HistoryRecordManagerTest {
         assertEquals("https://www.youtube.com/watch?v=c-fvFv8uprA",
                 newHistoryList.get(1).component1().getUrl());
 
-        assertEquals("https://www.youtube.com/watch?v=o5behEieBDA",
+        assertEquals("https://www.youtube.com/watch?v=UocEGvQ10OE",
                 newHistoryList.get(2).component1().getUrl());
 
         // delete watchhistory
@@ -311,7 +311,7 @@ public class HistoryRecordManagerTest {
 
         try {
             final StreamInfo vidInfo1 = StreamInfo
-                    .getInfo("https://www.youtube.com/watch?v=o5behEieBDA");
+                    .getInfo("https://www.youtube.com/watch?v=UocEGvQ10OE");
 
             final StreamInfo vidInfo2 = StreamInfo
                     .getInfo("https://www.youtube.com/watch?v=usNsCeOV4GM");

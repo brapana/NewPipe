@@ -183,7 +183,8 @@ import static org.schabi.newpipe.util.ListHelper.getResolutionIndex;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static org.schabi.newpipe.util.Localization.containsCaseInsensitive;
 
-public final class Player implements
+// remove final keyword to allow mocking
+public class Player implements
         EventListener,
         PlaybackListener,
         ImageLoadingListener,
