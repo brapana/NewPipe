@@ -1,10 +1,7 @@
 package org.schabi.newpipe.player.playback;
 
-import android.os.Looper;
-
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -26,12 +23,6 @@ public class PlayerMediaSessionTest {
     private static PlayerMediaSession playerMediaSession;
 
     private static Player player;
-
-    @BeforeClass
-    public static void instantiateErrorActivity() {
-        // Looper thread creation necessary to use
-        Looper.prepare();
-    }
 
 
     /**
